@@ -1,0 +1,82 @@
+.page {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Roboto', sans-serif;
+  gap: 40px;
+  text-align: center;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #fff;
+  color: #333;
+}
+
+.primaryBtn {
+  padding: 12px 24px;
+  background-color: #2575fc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.primaryBtn:hover {
+  background-color: #6a11cb;
+}
+
+.walletAddress {
+  font-size: 1.1rem;
+  color: #f1f1f1;
+}
+
+.points {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.footer {
+  font-size: 0.875rem;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.footerLink {
+  color: #f1f1f1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footerLink:hover {
+  color: #2575fc;
+}

@@ -1,81 +1,198 @@
-# Turborepo starter
+# ZRP3 Rewards App Documentation
 
-This is an official starter Turborepo.
+Welcome to the **ZRP3 Rewards** app! This project allows users to interact with the Ethereum blockchain to request and check their ZRPoints balance. Below is a guide on how to set up and contribute to this project.
 
-## Using this example
+## Overview
 
-Run the following command:
+The app consists of two main parts:
 
-```sh
-npx create-turbo@latest
-```
+1.  **Frontend**: A React/Next.js application that interacts with the Ethereum blockchain via MetaMask to request and check ZRPoints.
+2.  **Backend**: A smart contract built with Solidity that allows users to request ZRPoints and check their balance.
 
-## What's inside?
+## Frontend
 
-This Turborepo includes the following packages/apps:
+### Features
 
-### Apps and Packages
+- **Connect Wallet**: Users can connect their MetaMask wallet (or another Ethereum-compatible wallet) to interact with the app.
+- **Request ZRPoints**: Users can request ZRPoints, which are added to their account in the smart contract.
+- **Check ZRPoints Balance**: Users can input an address and check the ZRPoints balance for that address.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Setup and Installation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+1.  **Install Dependencies**:
+    ```bash
+    pnpm install
+    ```
 
-### Utilities
+2.  **Run the Development Server**:
+    ```bash
+    pnpm run dev
+    ```
+    > This will start the development server at `http://localhost:3000`.
 
-This Turborepo has some additional tools already setup for you:
+### Usage
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **Connect to Wallet**: Click the **Conectar Carteira** button to connect your wallet. The address of the connected wallet will be displayed once the connection is successful.
+- **Request ZRPoints**: Enter the number of ZRPoints you want to request and click **Requisitar ZRPoints**.
+- **Check ZRPoints Balance**: Enter a wallet address and click **Consultar Pontos** to check the ZRPoints balance.
 
-### Build
+### File Structure
 
-To build all apps and packages, run the following command:
+- `pages/index.tsx`: Main page where users interact with the app.
+- `libs/ethers.ts`: Contains the functions to request and check ZRPoints via the Ethereum blockchain.
+- `styles/page.module.css`: Styling for the page.
 
-```
-cd my-turborepo
-pnpm build
-```
+### Dependencies
 
-### Develop
+- **React** and **Next.js** for the frontend framework.
+- **ethers.js** for Ethereum blockchain interaction.
+- **@repo/ui** for UI components.
 
-To develop all apps and packages, run the following command:
+### Example of Frontend Code
 
-```
-cd my-turborepo
-pnpm dev
-```
+  ```typescript
+  import { useState } from "react";
+  import { Button } from "@repo/ui/button";
+  import { requestZRPoints, getZRPoints } from "./libs/ethers";
+  import styles from "./page.module.css";
 
-### Remote Caching
+  export default function Home() {
+    const [amount, setAmount] = useState<number>(0);
+    const [userAddress, setUserAddress] = useState<string>("");
+    const [points, setPoints] = useState<number | null>(null);
+    const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+    const connectWallet = async () => { ... };
+    const handleRequestZRPoints = async () => { ... };
+    const handleGetZRPoints = async () => { ... };
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+    return (
+      <div className={styles.page}>
+        {/* Your JSX code */}
+      </div>
+    );
+  }
+  ```
 
-```
-cd my-turborepo
-npx turbo login
-```
+Backend
+-------
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Features
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+-   **Request ZRPoints**: Users can request ZRPoints, which are added to their account.
+-   **Get ZRPoints Balance**: Check the ZRPoints balance for any given address.
 
-```
-npx turbo link
-```
+### Setup and Installation
 
-## Useful Links
+1.  **Install Dependencies**:
+    ```bash
+    pnpm install
+    ```
 
-Learn more about the power of Turborepo:
+2.  **Run the Development Node**:
+    ```bash
+    pnpm run hardhat:dev
+    ```
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+3.  **Deploy the Contract**: Deploy the contract to the local blockchain or a public testnet (Sepolia).
+
+-   **Deploy to Local Network**:
+      ```bash
+      pnpm run deploy:local
+      ```
+
+-   **Deploy to Sepolia**:
+      ```bash
+      pnpm run deploy:sepolia
+      ```
+
+### Smart Contract Code
+
+  ```solidity
+  // SPDX-License-Identifier: UNLICENSED
+
+  pragma solidity ^0.8.27;
+
+  import "hardhat/console.sol";
+
+  contract ZRP3Rewards {
+      mapping(address => uint256) private zrPoints;
+
+      event ZRPointsRequested(address indexed user, uint256 amount);
+
+      constructor() {
+          console.log("Contract deployed successfully!");
+      }
+
+      function requestZRPoints(uint256 amount) external {
+          require(amount > 0, "Amount must be greater than zero");
+          zrPoints[msg.sender] += amount;
+          emit ZRPointsRequested(msg.sender, amount);
+          console.log("ZRPoints requested: %s for %s", amount, msg.sender);
+      }
+
+      function getZRPoints(address user) external view returns (uint256) {
+          return zrPoints[user];
+      }
+  }
+  ```
+
+### Dependencies
+
+-   **Hardhat** for Ethereum development.
+-   **@typechain/ethers-v5** and **@typechain/hardhat** for TypeChain support.
+-   **dotenv** for managing environment variables.
+
+### Example of Backend Code
+
+  ```typescript
+  import { ethers } from "hardhat";
+
+  async function main() {
+    const [deployer] = await ethers.getSigners();
+    console.log("Deploying contracts with the account:", deployer.address);
+
+    const ZRP3Rewards = await ethers.getContractFactory("ZRP3Rewards");
+    const contract = await ZRP3Rewards.deploy();
+    console.log("ZRP3Rewards contract deployed to:", contract.address);
+  }
+
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+  ```
+
+How to Contribute
+-----------------
+
+1.  **Fork the Repository**: Click the "Fork" button on GitHub to create your own copy of this repository.
+2.  **Clone the Repository**: Clone your fork to your local machine:
+    ```bash
+    git clone https://github.com/durvaal/zrp3-rewards.git
+    ```
+
+3.  **Create a Branch**: Create a new branch for your feature or bugfix:
+    ```bash
+    git checkout -b feature-name
+    ```
+
+4.  **Make Changes**: Implement your changes and test them locally.
+5.  **Commit and Push**:
+    ```bash
+    git commit -am "Add new feature"
+    git push origin feature-name
+    ```
+
+6.  **Create a Pull Request**: Go to your GitHub fork and create a pull request with your changes.
+
+License
+-------
+
+This project is licensed under the **MIT License**.
+
+Contact
+-------
+
+For any questions or issues, please open an issue on GitHub or contact the project maintainers.
+
